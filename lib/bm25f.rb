@@ -66,7 +66,7 @@ class BM25F
   # @param documents [Hash] The documents.
   # @return [Float] The average document length.
   def calculate_average_document_length(documents)
-    total_length = documents.sum { |doc| doc.values.map(&:length).sum }
+    total_length = documents.sum { |doc| doc.values.map { |v| v.nil? ? 0 : v.length }.sum }
     total_length / documents.length.to_f
   end
 
@@ -77,7 +77,7 @@ class BM25F
   def calculate_document_lengths(documents)
     doc_lengths = {}
     documents.each_with_index do |doc, i|
-      doc_lengths[i] = doc.transform_values(&:length)
+      doc_lengths[i] = doc.transform_values { |v| v.nil ? 0 : v.length }
     end
     doc_lengths
   end
