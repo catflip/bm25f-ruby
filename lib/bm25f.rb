@@ -77,7 +77,7 @@ class BM25F
   def calculate_document_lengths(documents)
     doc_lengths = {}
     documents.each_with_index do |doc, i|
-      doc_lengths[i] = doc.transform_values { |v| v.nil ? 0 : v.length }
+      doc_lengths[i] = doc.transform_values { |v| v.nil? ? 0 : v.length }
     end
     doc_lengths
   end

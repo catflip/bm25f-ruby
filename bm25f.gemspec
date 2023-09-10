@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'bm25f'
-  s.version = '0.2.1'
+  s.version = '0.2.3'
   s.summary = 'BM25F ranking function in Ruby.'
   s.description = 'A fast implementation of the BM25F ranking algorithm for information retrieval systems, written in Ruby.'
   s.author = 'catflip'
