@@ -6,7 +6,7 @@ class BM25FTest < Minitest::Test
     @bm25f = BM25F.new
     @documents = [
       { title: 'hello world', content: 'foo bar baz' },
-      { title: 'foo bar', content: 'goodbye, world!' }
+      { title: 'foo bar', content: 'goodbye, world!', test: nil }
     ]
   end
 

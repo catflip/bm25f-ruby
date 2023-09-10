@@ -88,7 +88,7 @@ class BM25F
   def calculate_idf
     idf = {}
     @field_weights.each_key do |field|
-      field_doc_count = @documents.count { |doc| !doc[field].empty? }
+      field_doc_count = @documents.count { |doc| !doc[field]&.empty? }
       idf[field] = Math.log((@total_docs - field_doc_count + 0.5) / (field_doc_count + 0.5) + 1.0)
     end
     idf
@@ -114,7 +114,10 @@ class BM25F
         tf = field_term_frequency(field, term, doc_id)
         idf = @idf[field]
         field_length_norm = field_length_norm(field, doc_id)
-        doc_score += @field_weights[field] * ((tf * (@term_freq_weight + 1)) / (tf + @term_freq_weight * field_length_norm) * idf)
+        val = @field_weights[field] * ((tf * (@term_freq_weight + 1)) / (tf + @term_freq_weight * field_length_norm) * idf)
+        val = 0 if val.nan?
+
+        doc_score += val
       end
     end
     doc_score
@@ -127,7 +130,10 @@ class BM25F
   # @param doc_id [Integer] The document ID.
   # @return [Integer] The term frequency.
   def field_term_frequency(field, term, doc_id)
-    @documents[doc_id][field].scan(term).count
+    val = @documents[doc_id][field]
+    return 0 if val.nil?
+
+    val.scan(term).count
   end
 
   # Calculates the field length normalization factor of a document.
@@ -136,6 +142,9 @@ class BM25F
   # @param doc_id [Integer] The document ID.
   # @return [Float] The field length normalization factor.
   def field_length_norm(field, doc_id)
-    1.0 - @doc_length_weight + @doc_length_weight * (@doc_lengths[doc_id][field] / @avg_doc_length)
+    val = @doc_lengths[doc_id][field]
+    return 0 if val.nil?
+
+    1.0 - @doc_length_weight + @doc_length_weight * (val / @avg_doc_length)
   end
 end
