@@ -1,8 +1,7 @@
-require 'treat'
+require 'uea-stemmer'
+require 'pragmatic_tokenizer'
 
 class BM25F
-  include Treat::Core::DSL
-
   # Initializes a BM25F model.
   #
   # @param term_freq_weight [Float] Weight for term frequency.
@@ -10,6 +9,9 @@ class BM25F
   def initialize(term_freq_weight: 1.33, doc_length_weight: 0.8)
     @term_freq_weight = term_freq_weight
     @doc_length_weight = doc_length_weight
+
+    @tokenizer = PragmaticTokenizer::Tokenizer.new
+    @stemmer = UEAStemmer.new
   end
 
   # Fits the model to a set of documents.
@@ -56,7 +58,7 @@ class BM25F
     documents.each do |k, v|
       next unless v.instance_of? String
 
-      documents[k] = sentence(v).map(&:stem).join(' ')
+      documents[k] = v.map { |t| @stemmer.stem t }.oin(' ')
     end
     documents
   end
@@ -99,7 +101,7 @@ class BM25F
   # @param query [String] The query to preprocess.
   # @return [Array<String>] An array of preprocessed query terms.
   def preprocess_query(query)
-    sentence(query).tokenize.map(&:stem)
+    @tokenizer.tokenize(query).map { |t| @stemmer.stem t }
   end
 
   # Calculates the score of a document using an array of query terms.
