@@ -58,7 +58,7 @@ class BM25F
     documents.each do |k, v|
       next unless v.instance_of? String
 
-      documents[k] = v.map { |t| @stemmer.stem t }.oin(' ')
+      documents[k] = v.map { |t| @stemmer.stem t }.join(' ')
     end
     documents
   end
